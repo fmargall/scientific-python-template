@@ -1,0 +1,17 @@
+name: Feature request
+description: Suggest a new file, question or tool for the generated projects.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature description
+      description: What you would like the template to generate, and the need behind it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Examples of the file or question to add, alternatives, or references to other templates.
