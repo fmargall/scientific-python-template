@@ -1,3 +1,8 @@
+{% if license == 'AGPL-3.0-or-later' -%}
+# SPDX-License-Identifier: {{ license }}
+# Copyright (C) {{ copyright_year }} {{ copyright_holder }}
+
+{% endif -%}
 """Smoke tests for the {{ package_name }} package."""
 
 import {{ package_name }}
