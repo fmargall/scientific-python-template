@@ -8,3 +8,13 @@ project_name:
     {% if not project_name.strip() %}
     The project name cannot be empty.
     {% endif %}
+
+repository_url:
+  type: str
+  help: URL of the repository (e.g. https://github.com/owner/repo)
+  validator: >-
+    {% if not repository_url.startswith("https://") %}
+    The repository URL must start with https://.
+    {% elif repository_url.endswith("/") or repository_url.endswith(".git") %}
+    The repository URL must not end with "/" or ".git".
+    {% endif %}
