@@ -9,13 +9,13 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 4
 
-[*.py]
+[*.{py,py.jinja}]
 max_line_length = 100
 
-[*.{yaml,yml,json,cff}]
+[*.{yaml,yml,json,cff,yaml.jinja,yml.jinja,json.jinja,cff.jinja}]
 indent_size = 2
 
-[*.md]
+[*.{md,md.jinja}]
 # Two trailing spaces are a hard line break in Markdown
 trim_trailing_whitespace = false
 indent_size = 2
