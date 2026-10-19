@@ -88,8 +88,7 @@ optional answers (author email, ORCID, homepage, keywords).
 
 1. Create a branch from `main`.
 2. Make your changes, and test them as described above.
-3. Describe in [`CHANGELOG.md`](CHANGELOG.md), under `[Unreleased]`, what changes in the
-   generated projects.
+3. Describe what changes in the generated projects in [`CHANGELOG.md`](CHANGELOG.md).
 4. Open a pull request, listing the answers you tested the change with.
 
 Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/),
