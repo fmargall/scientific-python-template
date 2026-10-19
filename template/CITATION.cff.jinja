@@ -1,7 +1,4 @@
-{#- Quote a value as a YAML double-quoted string, escaping \ and " -#}
-{%- macro q(value) -%}
-"{{ value | replace('\\', '\\\\') | replace('"', '\\"') }}"
-{%- endmacro -%}
+{%- from "macros/quote.jinja" import q -%}
 cff-version: 1.2.0
 message: {{ q("If you use " ~ project_name ~ " in your research, please cite it as below.") }}
 type: software
