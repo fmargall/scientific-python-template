@@ -1,0 +1,30 @@
+{#- Quote a value as a YAML double-quoted string, escaping \ and " -#}
+{%- macro q(value) -%}
+"{{ value | replace('\\', '\\\\') | replace('"', '\\"') }}"
+{%- endmacro -%}
+cff-version: 1.2.0
+message: {{ q("If you use " ~ project_name ~ " in your research, please cite it as below.") }}
+type: software
+title: {{ q(project_name) }}
+abstract: >-
+  {{ project_description.strip() | indent(2) }}
+authors:
+  - family-names: {{ q(author_family_names) }}
+    given-names: {{ q(author_given_names) }}
+{%- if author_email %}
+    email: {{ q(author_email) }}
+{%- endif %}
+{%- if author_orcid %}
+    orcid: {{ q(author_orcid) }}
+{%- endif %}
+repository-code: {{ q(repository_url) }}
+{%- if homepage_url %}
+url: {{ q(homepage_url) }}
+{%- endif %}
+license: {{ license }}
+{%- if keywords %}
+keywords:
+{%- for keyword in keywords %}
+  - {{ q(keyword) }}
+{%- endfor %}
+{%- endif %}

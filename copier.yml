@@ -18,3 +18,77 @@ repository_url:
     {% elif repository_url.endswith("/") or repository_url.endswith(".git") %}
     The repository URL must not end with "/" or ".git".
     {% endif %}
+
+homepage_url:
+  type: str
+  help: URL of the project homepage or documentation (leave empty if none)
+  default: ""
+  validator: >-
+    {% if homepage_url and not homepage_url.startswith("https://") %}
+    The homepage URL must start with https://.
+    {% endif %}
+
+project_description:
+  type: str
+  multiline: true
+  help: Short description of the project (used as the abstract in CITATION.cff)
+  validator: >-
+    {% if not project_description.strip() %}
+    The project description cannot be empty.
+    {% endif %}
+
+keywords:
+  type: yaml
+  help: Keywords describing the project, as a YAML list (e.g. [optics, rendering])
+  default: []
+  validator: >-
+    {% if keywords is not sequence or keywords is string %}
+    The keywords must be a YAML list.
+    {% endif %}
+
+license:
+  type: str
+  help: License of the project (SPDX identifier)
+  choices:
+    - MIT
+    - Apache-2.0
+    - BSD-3-Clause
+    - MPL-2.0
+    - LGPL-3.0-or-later
+    - GPL-3.0-or-later
+    - AGPL-3.0-or-later
+
+# Author
+author_given_names:
+  type: str
+  help: Author given names (first names)
+  validator: >-
+    {% if not author_given_names.strip() %}
+    The author given names cannot be empty.
+    {% endif %}
+
+author_family_names:
+  type: str
+  help: Author family names (last names)
+  validator: >-
+    {% if not author_family_names.strip() %}
+    The author family names cannot be empty.
+    {% endif %}
+
+author_email:
+  type: str
+  help: Author email (leave empty to not publish it)
+  default: ""
+  validator: >-
+    {% if author_email and "@" not in author_email %}
+    The author email is not valid.
+    {% endif %}
+
+author_orcid:
+  type: str
+  help: Author ORCID, as a full URL (e.g. https://orcid.org/0000-0000-0000-0000), or empty
+  default: ""
+  validator: >-
+    {% if author_orcid and not (author_orcid.startswith("https://orcid.org/") and author_orcid | length == 37) %}
+    The ORCID must look like https://orcid.org/0000-0000-0000-0000.
+    {% endif %}
