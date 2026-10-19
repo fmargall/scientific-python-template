@@ -9,6 +9,27 @@ project_name:
     The project name cannot be empty.
     {% endif %}
 
+package_name:
+  type: str
+  help: Import name of the Python package (e.g. import lux_machina)
+  default: "{{ project_name.strip() | lower | replace(' ', '_') | replace('-', '_') }}"
+  validator: >-
+    {% if not (package_name.isidentifier() and package_name.isascii() and package_name == package_name.lower()) %}
+    The package name must be a valid lowercase ASCII Python identifier.
+    {% endif %}
+
+distribution_name:
+  type: str
+  help: Distribution name, as published on PyPI (e.g. pip install lux-machina)
+  default: "{{ package_name | replace('_', '-') }}"
+  validator: >-
+    {% if not (distribution_name and distribution_name.isascii()
+               and distribution_name.replace('-', '').replace('_', '').replace('.', '').isalnum()
+               and distribution_name[0].isalnum() and distribution_name[-1].isalnum()) %}
+    The distribution name must only contain ASCII letters, digits, "-", "_" or ".",
+    and start and end with a letter or digit.
+    {% endif %}
+
 repository_url:
   type: str
   help: URL of the repository (e.g. https://github.com/owner/repo)

@@ -1,0 +1,19 @@
+{#- Docstring from the description: one paragraph, wrapped, with \ and """ escaped -#}
+{%- set docstring = project_description.split() | join(' ') | wordwrap(72)
+    | replace('\\', '\\\\') | replace('"""', '\\"\\"\\"') -%}
+{%- if '\n' in docstring -%}
+"""{{ docstring }}
+"""
+{%- else -%}
+"""{{ docstring }}"""
+{%- endif %}
+
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("{{ distribution_name }}")
+except PackageNotFoundError:  # pragma: no cover
+    # Fallback when the source tree is imported without install
+    # Tests always run on an installed package, so this line is
+    # excluded from coverage measurement thanks to the pragma.
+    __version__ = "0+unknown"
