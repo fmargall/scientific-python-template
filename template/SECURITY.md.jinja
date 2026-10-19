@@ -1,0 +1,32 @@
+# Security Policy
+
+## Supported Versions
+
+Only the latest release of {{ project_name }} receives security fixes. Please check that the
+vulnerability still exists in the latest release before reporting it.
+
+## Reporting a Vulnerability
+
+Please do **not** report security vulnerabilities through public issues, discussions or pull
+requests.
+
+Report them privately through
+[GitHub private vulnerability reporting]({{ repository_url }}/security/advisories/new).
+{%- if author_email %}
+If you cannot use GitHub, email [{{ author_email }}](mailto:{{ author_email }}).
+{%- endif %}
+
+Please include as much of the following as you can:
+
+- the affected versions of {{ project_name }};
+- a description of the vulnerability and of its impact;
+- the steps to reproduce it, ideally with a minimal example;
+- any known mitigation or fix.
+
+## What to Expect
+
+{{ project_name }} is maintained on a best-effort basis. You can expect:
+
+- regular updates while the vulnerability is investigated and fixed;
+- a coordinated disclosure: the fix is released before the vulnerability is made public, and
+  you are credited in the security advisory, unless you prefer to remain anonymous.
