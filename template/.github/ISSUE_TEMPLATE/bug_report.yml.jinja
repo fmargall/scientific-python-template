@@ -1,0 +1,21 @@
+{%- from "macros/quote.jinja" import q -%}
+name: Bug report
+description: {{ q("Report something in " ~ project_name ~ " that does not work as expected.") }}
+labels: [bug]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: >-
+        What happens, and what you expected instead. A short example reproducing it and the
+        full error message help a lot, if you have them.
+    validations:
+      required: true
+
+  - type: textarea
+    id: system
+    attributes:
+      label: System information
+      description: {{ q("Versions of " ~ project_name ~ " and Python, and operating system.") }}
+      placeholder: {{ q(project_name ~ " 0.1.0, Python 3.13, Ubuntu 24.04") }}
