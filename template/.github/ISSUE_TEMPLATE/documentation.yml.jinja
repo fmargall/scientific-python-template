@@ -1,0 +1,38 @@
+{%- from "macros/quote.jinja" import q -%}
+name: Documentation
+description: {{ q("Report missing, incorrect or unclear documentation of " ~ project_name ~ ".") }}
+labels: [documentation]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: The page, section, docstring or file concerned, ideally as a link.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of problem
+      options:
+        - Missing documentation
+        - Incorrect or outdated documentation
+        - Unclear documentation
+        - Typo or formatting
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is wrong or missing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested improvement
+      description: How the documentation could be improved, if you have an idea.
