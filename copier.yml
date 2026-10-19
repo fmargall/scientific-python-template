@@ -51,11 +51,6 @@ license:
   help: License of the project (SPDX identifier)
   choices:
     - MIT
-    - Apache-2.0
-    - BSD-3-Clause
-    - MPL-2.0
-    - LGPL-3.0-or-later
-    - GPL-3.0-or-later
     - AGPL-3.0-or-later
 
 # Author
@@ -91,4 +86,23 @@ author_orcid:
   validator: >-
     {% if author_orcid and not (author_orcid.startswith("https://orcid.org/") and author_orcid | length == 37) %}
     The ORCID must look like https://orcid.org/0000-0000-0000-0000.
+    {% endif %}
+
+# Copyright
+copyright_holder:
+  type: str
+  help: Copyright holder (shown in the LICENSE)
+  default: "{{ author_given_names }} {{ author_family_names }}"
+  validator: >-
+    {% if not copyright_holder.strip() %}
+    The copyright holder cannot be empty.
+    {% endif %}
+
+copyright_year:
+  type: str
+  help: Year of the copyright notice
+  default: "{{ '%Y' | strftime }}"
+  validator: >-
+    {% if not (copyright_year | length == 4 and copyright_year.isdigit()) %}
+    The copyright year must be a 4-digit year.
     {% endif %}
