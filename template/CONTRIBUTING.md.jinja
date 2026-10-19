@@ -1,0 +1,77 @@
+# Contributing to {{ project_name }}
+
+Thank you for your interest in {{ project_name }}! Everyone taking part in the project is
+expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Reporting Bugs and Requesting Features
+
+Open an [issue]({{ repository_url }}/issues), with a minimal example reproducing the bug when
+there is one. Security vulnerabilities must not be reported in public issues: see the
+[Security Policy](SECURITY.md) instead.
+
+## Setting Up a Development Environment
+
+The project is managed with [uv](https://docs.astral.sh/uv/). Clone the repository, then
+create the development environment and install the pre-commit hooks:
+
+```bash
+git clone {{ repository_url }}.git
+cd {{ repository_url.split('/')[-1] }}
+uv sync
+uv run pre-commit install
+```
+
+`uv sync` creates a `.venv` with the package installed in editable mode and the `dev`
+dependency group, at the exact versions of `uv.lock`.
+
+Without uv, the same environment can be created with pip, but without the versions of
+`uv.lock`. Dependency groups require pip 25.1 or later, hence the upgrade of pip first:
+
+```bash
+python -m venv .venv
+.venv/bin/python -m pip install --upgrade pip  # .venv\Scripts\python on Windows
+.venv/bin/python -m pip install -e . --group dev
+```
+
+The pre-commit hook of pyright runs it through `uv run`: without uv, skip it with
+`SKIP=pyright git commit`, and run `pyright` from the environment instead.
+
+## Running the Checks
+
+```bash
+uv run pytest --cov                # tests, with coverage
+uv run pyright                     # type checking
+uv run pre-commit run --all-files  # linting, formatting and all the other hooks
+```
+
+The pre-commit hooks also run on every commit, on the staged files.
+
+## Managing Dependencies
+
+Add a dependency with `uv add <package>`, or a development tool with
+`uv add --group dev <tool>`. Both commands update `pyproject.toml` and `uv.lock`: commit
+the two files together.
+
+Upgrade the locked versions with `uv lock --upgrade` (or
+`uv lock --upgrade-package <package>` for a single one).
+
+## Submitting Changes
+
+1. Create a branch from `main`.
+2. Make your changes, with tests for any new behavior.
+3. Describe user-visible changes in [`CHANGELOG.md`](CHANGELOG.md), under `[Unreleased]`.
+4. Check that all the checks pass, then open a pull request.
+
+Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/),
+prefixed with the matching [gitmoji](https://gitmoji.dev/), for example:
+
+```text
+✨ feat: add a command-line interface
+🐛 fix: handle empty input files
+📝 docs: document the installation on Windows
+```
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the
+[{{ license }}](LICENSE.txt) license of the project.

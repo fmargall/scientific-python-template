@@ -42,12 +42,19 @@ Repository = {{ q(repository_url) }}
 Issues = {{ q(repository_url ~ "/issues") }}
 Changelog = {{ q(repository_url ~ "/blob/main/CHANGELOG.md") }}
 
-[project.optional-dependencies]
+# Optional features for users go in extras, published with the package and
+# installed with `pip install {{ distribution_name }}[name]`, e.g.:
+# [project.optional-dependencies]
+# ui = ["PySide6"]
+
+# Tools for contributors go in dependency groups (PEP 735): they are not published,
+# and are installed with `uv sync` (or `pip install -e . --group dev`, pip >= 25.1)
+[dependency-groups]
 test = ["pytest", "pytest-cov"]
 # pyright is pinned: each release can add new errors, upgrades must be deliberate.
 # The "nodejs" extra ships Node.js as a wheel instead of downloading it at first run.
 dev = [
-    "{{ distribution_name }}[test]",
+    { include-group = "test" },
     "ruff",
     "pre-commit",
     "pyright[nodejs]==1.1.414",
