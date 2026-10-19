@@ -24,8 +24,8 @@ distribution_name:
   default: "{{ package_name | replace('_', '-') }}"
   validator: >-
     {% if not (distribution_name and distribution_name.isascii()
-               and distribution_name.replace('-', '').replace('_', '').replace('.', '').isalnum()
-               and distribution_name[0].isalnum() and distribution_name[-1].isalnum()) %}
+      and distribution_name.replace('-', '').replace('_', '').replace('.', '').isalnum()
+      and distribution_name[0].isalnum() and distribution_name[-1].isalnum()) %}
     The distribution name must only contain ASCII letters, digits, "-", "_" or ".",
     and start and end with a letter or digit.
     {% endif %}
@@ -117,7 +117,7 @@ author_orcid:
 # Copyright
 copyright_holder:
   type: str
-  help: Copyright holder (shown in the LICENSE)
+  help: Copyright holder (shown in LICENSE.txt)
   default: "{{ author_given_names }} {{ author_family_names }}"
   validator: >-
     {% if not copyright_holder.strip() %}
