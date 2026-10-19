@@ -1,0 +1,9 @@
+# Commits ignored by `git blame` (formatting-only changes).
+# Add the full 40-character hash of each such commit, one per line,
+# with a comment describing it.
+#
+# Enable locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Apply pre-commit hygiene fixes (EOF, line endings)
+1b2619fc7b03d2ba14ca46bfc18696628949c161
