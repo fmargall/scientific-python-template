@@ -127,6 +127,15 @@ author_orcid:
     The ORCID must look like https://orcid.org/0000-0000-0000-0000.
     {% endif %}
 
+conduct_email:
+  type: str
+  help: Email to report code of conduct violations (shown in CODE_OF_CONDUCT.md)
+  default: "{{ author_email }}"
+  validator: >-
+    {% if "@" not in conduct_email %}
+    A valid email is required to report code of conduct violations.
+    {% endif %}
+
 # Copyright
 copyright_holder:
   type: str

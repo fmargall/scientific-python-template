@@ -22,8 +22,8 @@ repos:
     rev: 3.11.1
     hooks:
       - id: editorconfig-checker
-        # The license text is kept verbatim and must not be reformatted
-        exclude: ^LICENSE\.txt$
+        # The license and code of conduct texts are kept verbatim and must not be reformatted
+        exclude: ^(LICENSE\.txt|CODE_OF_CONDUCT\.md)$
 {%- if license == 'AGPL-3.0-or-later' %}
 
   # Insert the SPDX license header at the top of every Python file

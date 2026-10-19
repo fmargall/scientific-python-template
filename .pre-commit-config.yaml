@@ -19,5 +19,5 @@ repos:
     rev: 3.11.1
     hooks:
       - id: editorconfig-checker
-        # License texts are kept verbatim and must not be reformatted
-        exclude: ^(LICENSE\.txt|licenses/.*)$
+        # License and code of conduct texts are kept verbatim and must not be reformatted
+        exclude: ^(LICENSE\.txt|CODE_OF_CONDUCT\.md|licenses/.*|template/CODE_OF_CONDUCT\.md\.jinja)$
