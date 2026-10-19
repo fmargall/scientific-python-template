@@ -1,0 +1,82 @@
+{%- from "macros/quote.jinja" import q -%}
+[build-system]
+requires = ["setuptools >= 77", "setuptools-scm >= 8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "{{ distribution_name }}"
+dynamic = ["version"]
+description = {{ q(project_description.strip()) }}
+authors = [
+{%- if author_email %}
+    { name = {{ q(author_given_names ~ " " ~ author_family_names) }}, email = {{ q(author_email) }} },
+{%- else %}
+    { name = {{ q(author_given_names ~ " " ~ author_family_names) }} },
+{%- endif %}
+]
+{%- if keywords %}
+keywords = [
+{%- for keyword in keywords %}
+    {{ q(keyword) }},
+{%- endfor %}
+]
+{%- endif %}
+# Add the "Intended Audience" and "Topic" classifiers of the project:
+# https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Typing :: Typed",
+]
+readme = "README.md"
+license = "{{ license }}"
+license-files = ["LICENSE.txt"]
+requires-python = ">={{ python_min_version }}"
+dependencies = []
+
+[project.urls]
+Homepage = {{ q(homepage_url or repository_url) }}
+Repository = {{ q(repository_url) }}
+Issues = {{ q(repository_url ~ "/issues") }}
+Changelog = {{ q(repository_url ~ "/blob/main/CHANGELOG.md") }}
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-cov"]
+# pyright is pinned: each release can add new errors, upgrades must be deliberate.
+# The "nodejs" extra ships Node.js as a wheel instead of downloading it at first run.
+dev = [
+    "{{ distribution_name }}[test]",
+    "ruff",
+    "pre-commit",
+    "pyright[nodejs]==1.1.414",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["{{ package_name }}*"]
+
+[tool.setuptools_scm]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config"]
+xfail_strict = true
+
+[tool.coverage.run]
+branch = true
+source = ["{{ package_name }}"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 90
+
+[tool.pyright]
+# Tests are checked too: they are the first client of the public API
+include = ["src", "tests"]
+# Check against the oldest supported version, so newer syntax is rejected
+pythonVersion = "{{ python_min_version }}"
+typeCheckingMode = "standard"
+# Not part of strict mode: flag "# type: ignore" comments that no longer hide anything
+reportUnnecessaryTypeIgnoreComment = "error"

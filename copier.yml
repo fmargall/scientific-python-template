@@ -30,6 +30,19 @@ distribution_name:
     and start and end with a letter or digit.
     {% endif %}
 
+# SPEC 0 (https://scientific-python.org/specs/spec-0000/): a Python version is
+# supported for 3 years after its release. Python 3.N is released in October of
+# year 2011 + N, so the oldest supported version is computed from today's date.
+python_min_version:
+  type: str
+  help: Oldest supported Python version (default follows SPEC 0)
+  default: "3.{{ ('%Y' | strftime | int) - (2013 if ('%m' | strftime | int) >= 10 else 2014) }}"
+  validator: >-
+    {% set parts = python_min_version.split('.') %}
+    {% if not (parts | length == 2 and parts[0] == '3' and parts[1].isdigit() and parts[1] | int >= 10) %}
+    The Python version must look like 3.N, with N >= 10.
+    {% endif %}
+
 repository_url:
   type: str
   help: URL of the repository (e.g. https://github.com/owner/repo)
