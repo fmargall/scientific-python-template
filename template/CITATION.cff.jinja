@@ -6,8 +6,7 @@ cff-version: 1.2.0
 message: {{ q("If you use " ~ project_name ~ " in your research, please cite it as below.") }}
 type: software
 title: {{ q(project_name) }}
-abstract: >-
-  {{ project_description.strip() | indent(2) }}
+abstract: {{ q(project_description.strip()) }}
 authors:
   - family-names: {{ q(author_family_names) }}
     given-names: {{ q(author_given_names) }}

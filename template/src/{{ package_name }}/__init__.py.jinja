@@ -1,12 +1,4 @@
-{#- Docstring from the description: one paragraph, wrapped, with \ and """ escaped -#}
-{%- set docstring = project_description.split() | join(' ') | wordwrap(72)
-    | replace('\\', '\\\\') | replace('"""', '\\"\\"\\"') -%}
-{%- if '\n' in docstring -%}
-"""{{ docstring }}
-"""
-{%- else -%}
-"""{{ docstring }}"""
-{%- endif %}
+"""{{ project_description.strip() }}"""
 
 from importlib.metadata import PackageNotFoundError, version
 

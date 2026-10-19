@@ -51,11 +51,16 @@ homepage_url:
 
 project_description:
   type: str
-  multiline: true
-  help: Short description of the project (used as the abstract in CITATION.cff)
+  help: One-line summary of the project, ending with a period (package docstring, CITATION.cff)
   validator: >-
     {% if not project_description.strip() %}
     The project description cannot be empty.
+    {% elif "\n" in project_description %}
+    The project description must fit on a single line.
+    {% elif not project_description.strip().endswith(".") %}
+    The project description must end with a period.
+    {% elif "\\" in project_description or '"""' in project_description %}
+    The project description cannot contain a backslash or triple quotes.
     {% endif %}
 
 keywords:
