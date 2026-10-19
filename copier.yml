@@ -1,2 +1,10 @@
 _subdirectory: template
 _min_copier_version: "9.0"
+
+project_name:
+  type: str
+  help: Project name (shown in the README.md)
+  validator: >-
+    {% if not project_name.strip() %}
+    The project name cannot be empty.
+    {% endif %}
