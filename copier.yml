@@ -43,6 +43,13 @@ python_min_version:
     The Python version must look like 3.N, with N >= 10.
     {% endif %}
 
+# Newest released Python version, tested in CI. Never asked nor stored in the
+# answers (when: false): it is computed again on each `copier update`, so that the
+# CI matrix follows the Python releases.
+python_max_version:
+  type: str
+  when: false
+  default: "3.{{ ('%Y' | strftime | int) - (2011 if ('%m' | strftime | int) >= 10 else 2012) }}"
 repository_url:
   type: str
   help: URL of the repository (e.g. https://github.com/owner/repo)
