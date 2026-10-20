@@ -76,7 +76,7 @@ jobs:
         # From python_min_version of .copier-answers.yml to the newest Python
         # release: `copier update` adds each new release.
 {%- if use_codecov %}
-        # Each run uploads a coverage report: after_n_builds of codecov.yml is
+        # Each run uploads a coverage report: after_n_builds of .github/codecov.yml is
         # computed from this matrix by the template, and updated along with it.
 {%- endif %}
         python-version: [{% for minor in range(min_minor, max_minor + 1) %}"3.{{ minor }}"{{ ", " if not loop.last }}{% endfor %}]
