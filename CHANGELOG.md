@@ -10,4 +10,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-[unreleased]: https://github.com/fmargall/scientific-python-template/commits/HEAD
+## [0.1.0] - 2026-10-20
+
+Initial release.
+
+### Added
+
+- Questions for the names of the project, package and distribution, its description,
+  keywords and URLs, its license (MIT or AGPL-3.0-or-later), its authors with their
+  ORCID, its oldest supported Python version (following SPEC 0) and the use of Codecov.
+- A `pyproject.toml` built with setuptools and setuptools-scm, a typed package in `src/`,
+  and the development tools in dependency groups, locked in `uv.lock`.
+- ruff, pyright and pytest with coverage, and pre-commit hooks for file hygiene,
+  `.editorconfig`, codespell, zizmor, ruff, pyright and, with the AGPL, SPDX headers.
+- A CI on every supported Python version and on the newest versions of the
+  dependencies, with a single `ci-passed` check, and a release workflow publishing to
+  TestPyPI and PyPI with trusted publishing, then creating a signed GitHub release.
+- `scripts/release.py`, which turns the `[Unreleased]` changes of the changelog into a
+  release and sets the version of `CITATION.cff`.
+- A README, a changelog, `CITATION.cff`, a license, a code of conduct, contributing and
+  security guides, issue forms, a pull request template and architecture decision
+  records.
+- Dependabot for the actions, the dependencies and the hooks, rulesets, and
+  `scripts/configure-github.sh` to configure the GitHub repository.
+- `.copier-answers.yml`, so that projects can be updated with `copier update`.
+
+[unreleased]: https://github.com/fmargall/scientific-python-template/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/fmargall/scientific-python-template/releases/tag/v0.1.0
