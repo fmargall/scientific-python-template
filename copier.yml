@@ -208,3 +208,14 @@ copyright_year:
     {% if not (copyright_year | length == 4 and copyright_year.isdigit()) %}
     The copyright year must be a 4-digit year.
     {% endif %}
+
+# Stored in the answers like any other: ADR-0001 keeps the same date across updates
+creation_date:
+  type: str
+  help: Creation date of the project, YYYY-MM-DD (date of ADR-0001)
+  default: "{{ '%Y-%m-%d' | strftime }}"
+  validator: >-
+    {% set parts = creation_date.split('-') %}
+    {% if not (parts | map('length') | list == [4, 2, 2] and (parts | join).isdigit()) %}
+    The creation date must look like YYYY-MM-DD.
+    {% endif %}
