@@ -17,8 +17,8 @@ import jinja2
 ROOT = Path(__file__).resolve().parent.parent
 # The answers of this repository, as if it had been generated from the template
 ANSWERS = {
-    "project_name": "python-template",
-    "repository_url": "https://github.com/fmargall/python-template",
+    "project_name": "Scientific Python Template",
+    "repository_url": "https://github.com/fmargall/scientific-python-template",
     "author_email": "fr.margall@proton.me",
     "conduct_email": "fr.margall@proton.me",
 }

@@ -1,15 +1,15 @@
-# Contributing to python-template
+# Contributing to the Scientific Python Template
 
-Thank you for your interest in python-template! Everyone taking part in the project is
+Thank you for your interest in the Scientific Python Template! Everyone taking part in the project is
 expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-python-template is a [Copier](https://copier.readthedocs.io/) template: it contains no
+The Scientific Python Template is a [Copier](https://copier.readthedocs.io/) template: it contains no
 Python package of its own, its product is the projects generated from it. Every change is
 therefore judged by its effect on a freshly generated project.
 
 ## Reporting Bugs and Requesting Features
 
-Open an [issue](https://github.com/fmargall/python-template/issues), with the answers given
+Open an [issue](https://github.com/fmargall/scientific-python-template/issues), with the answers given
 to the questions of the template and the command that fails in the generated project.
 Security vulnerabilities must not be reported in public issues: see the
 [Security Policy](SECURITY.md) instead.
@@ -49,8 +49,8 @@ The tools are run with [uv](https://docs.astral.sh/uv/). Install pre-commit as a
 then the hooks of this repository:
 
 ```bash
-git clone https://github.com/fmargall/python-template.git
-cd python-template
+git clone https://github.com/fmargall/scientific-python-template.git
+cd scientific-python-template
 uv tool install pre-commit
 pre-commit install
 ```

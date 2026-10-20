@@ -1,4 +1,4 @@
-# A Scientific Python template
+# Scientific Python Template
 
 [![Copier][copier-badge]][copier]
 

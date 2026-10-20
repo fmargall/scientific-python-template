@@ -16,7 +16,7 @@ _message_after_copy: |
         uv sync
         uv run pre-commit install
         git add --all
-        git commit -m "🎉 chore: generate the project from python-template"
+        git commit -m "🎉 chore: generate the project from the Scientific Python Template"
 
   2. Create the empty repository {{ repository_url }} on GitHub, push to it,
       then configure it with the GitHub CLI (gh). The script sets the merge
