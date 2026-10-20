@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-21
+
+### Changed
+
+- The footer of the README states that the project was made with Copier, with the
+  badge inline and centered.
+
 ## [0.1.0] - 2026-10-20
 
 Initial release.
@@ -35,5 +42,6 @@ Initial release.
   `scripts/configure-github.sh` to configure the GitHub repository.
 - `.copier-answers.yml`, so that projects can be updated with `copier update`.
 
-[unreleased]: https://github.com/fmargall/scientific-python-template/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/fmargall/scientific-python-template/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/fmargall/scientific-python-template/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/fmargall/scientific-python-template/releases/tag/v0.1.0
