@@ -3,7 +3,7 @@ _min_copier_version: "9.0"
 
 # Shown at the end of `copier copy`: the steps the template cannot do itself,
 # because they run commands (which Copier only allows with --trust) or happen
-# outside of this machine (GitHub, PyPI, Codecov)
+# outside of this machine (GitHub, PyPI, Zenodo, Codecov)
 _message_after_copy: |
   {{ project_name }} has been generated. Next steps:
 
@@ -18,9 +18,16 @@ _message_after_copy: |
         git add --all
         git commit -m "🎉 chore: generate the project from python-template"
 
-  2. Push to {{ repository_url }}, then in the Settings of the repository:
-      - Security: enable "Private vulnerability reporting" (used by SECURITY.md)
-      - Environments: create the "testpypi" and "pypi" environments
+  2. Create the empty repository {{ repository_url }} on GitHub, push to it,
+      then configure it with the GitHub CLI (gh). The script sets the merge
+      buttons, the security features, the Actions permissions, the testpypi and
+      pypi environments, and the rulesets of .github/rulesets: from then on,
+      main only changes through pull requests whose CI passes.
+
+        git remote add origin {{ repository_url }}.git
+        git push -u origin main
+        bash scripts/configure-github.sh --dry-run  # review the changes first
+        bash scripts/configure-github.sh
 
   3. On TestPyPI and PyPI, add a trusted publisher for the release.yml workflow,
       with the environment of the same name, to publish without any token.

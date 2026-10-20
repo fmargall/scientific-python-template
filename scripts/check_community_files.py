@@ -1,8 +1,9 @@
-"""Check that the community files of this repository match those of the template.
+"""Check that the files shared with the template have not drifted from it.
 
-CODE_OF_CONDUCT.md and SECURITY.md of this repository are the rendering of their
-versions in template/, with the answers of this repository: this script renders
-them again and fails if they differ.
+Some files of this repository come from template/: CODE_OF_CONDUCT.md and
+SECURITY.md are the rendering of their .jinja versions with the answers of this
+repository, and the GitHub configuration (rulesets, configure-github.sh) is an
+exact copy. This script renders and compares them again, and fails if any differs.
 
 Usage: uv run --no-project --with jinja2 python scripts/check_community_files.py
 """
@@ -21,29 +22,39 @@ ANSWERS = {
     "author_email": "fr.margall@proton.me",
     "conduct_email": "fr.margall@proton.me",
 }
-FILES = ["CODE_OF_CONDUCT.md", "SECURITY.md"]
+# Rendered from template/<name>.jinja
+RENDERED = ["CODE_OF_CONDUCT.md", "SECURITY.md"]
+# Copied verbatim from template/<name>
+COPIED = [
+    ".github/rulesets/main.json",
+    ".github/rulesets/version-tags.json",
+    "scripts/configure-github.sh",
+]
 
 
 def main() -> int:
-    """Render the community files of the template, and compare them with the repository."""
+    """Compare each shared file with its version in the template."""
     # Same options as Copier: the final newline of the templates is kept
     environment = jinja2.Environment(keep_trailing_newline=True, undefined=jinja2.StrictUndefined)
     failed = False
-    for name in FILES:
-        template = (ROOT / "template" / f"{name}.jinja").read_text(encoding="utf-8")
-        expected = environment.from_string(template).render(ANSWERS)
+    for name, source in [(name, f"{name}.jinja") for name in RENDERED] + [
+        (name, name) for name in COPIED
+    ]:
+        expected = (ROOT / "template" / source).read_text(encoding="utf-8")
+        if source.endswith(".jinja"):
+            expected = environment.from_string(expected).render(ANSWERS)
         actual = (ROOT / name).read_text(encoding="utf-8")
         if actual == expected:
-            print(f"{name} is in sync with template/{name}.jinja")
+            print(f"{name} is in sync with template/{source}")
             continue
         failed = True
-        print(f"{name} differs from the rendering of template/{name}.jinja:")
+        print(f"{name} differs from template/{source}:")
         sys.stdout.writelines(
             difflib.unified_diff(
                 actual.splitlines(keepends=True),
                 expected.splitlines(keepends=True),
                 fromfile=name,
-                tofile=f"template/{name}.jinja",
+                tofile=f"template/{source}",
             )
         )
     return 1 if failed else 0
