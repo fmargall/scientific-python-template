@@ -21,3 +21,12 @@ repos:
       - id: editorconfig-checker
         # License and code of conduct texts are kept verbatim and must not be reformatted
         exclude: ^(LICENSE\.txt|CODE_OF_CONDUCT\.md|licenses/.*|template/CODE_OF_CONDUCT\.md\.jinja)$
+
+  # Find common misspellings, in the template files too. It only reports them: a
+  # word it does not know can be allowed with --ignore-words-list=word1,word2 in args
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.3
+    hooks:
+      - id: codespell
+        # Verbatim texts
+        exclude: ^(LICENSE\.txt|CODE_OF_CONDUCT\.md|licenses/.*|template/CODE_OF_CONDUCT\.md\.jinja)$

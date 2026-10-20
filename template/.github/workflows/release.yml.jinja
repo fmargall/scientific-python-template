@@ -10,7 +10,9 @@ permissions: {}
 
 jobs:
   ci:
-    uses: ./.github/workflows/ci.yml
+    # "$/": the self-repository syntax always loads the workflow of this repository
+    # at the same commit, never a file of the workspace (unlike "./")
+    uses: $/.github/workflows/ci.yml
     permissions:
       contents: read
 {%- if use_codecov %}

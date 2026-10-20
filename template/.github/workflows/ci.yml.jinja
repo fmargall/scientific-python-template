@@ -7,7 +7,11 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Called by release.yml before publishing anything
   workflow_call:
+  # Run by hand from the Actions tab, for example to check a branch again after
+  # a dependency release, without pushing anything
+  workflow_dispatch:
 
 permissions:
   contents: read
