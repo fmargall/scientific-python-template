@@ -72,6 +72,34 @@ prefixed with the matching [gitmoji](https://gitmoji.dev/), for example:
 📝 docs: document the installation on Windows
 ```
 
+## Releasing
+
+The version comes from the git tag (`vX.Y.Z`, following
+[Semantic Versioning](https://semver.org/)): pushing a tag runs the release workflow,
+which publishes the package to TestPyPI then PyPI, and creates the GitHub release.
+
+1. Prepare the release on a branch: `[Unreleased]` in `CHANGELOG.md` becomes the new version, and `CITATION.cff` gets its version and date.
+
+```bash
+git switch -c release/vX.Y.Z
+uv run scripts/release.py prepare X.Y.Z
+git commit -am "🔖 chore(release): prepare vX.Y.Z"
+```
+
+2. Open a pull request, and merge it once the checks pass.
+3. Tag the merge commit on `main`, then push the tag:
+
+```bash
+git switch main
+git pull
+git tag -s vX.Y.Z -m "vX.Y.Z"
+git push origin vX.Y.Z
+```
+
+The release workflow first runs `scripts/release.py check`: a forgotten step fails it
+before anything is published. The changelog section of the version becomes the notes of
+the GitHub release.
+
 ## License
 
 By contributing, you agree that your contributions will be licensed under the

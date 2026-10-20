@@ -24,9 +24,12 @@ _message_after_copy: |
 
   3. On TestPyPI and PyPI, add a trusted publisher for the release.yml workflow,
       with the environment of the same name, to publish without any token.
+
+  4. Optionally, enable the repository on Zenodo (Account > GitHub): each GitHub
+      release is then archived with a DOI, described by CITATION.cff.
   {%- if use_codecov %}
 
-  4. Install the Codecov GitHub app for the repository, or the tests job fails.
+  5. Install the Codecov GitHub app for the repository, or the tests job fails.
   {%- endif %}
 
 # Shown at the end of `copier update`

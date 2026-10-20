@@ -80,8 +80,9 @@ show_missing = true
 fail_under = 90
 
 [tool.pyright]
-# Tests are checked too: they are the first client of the public API
-include = ["src", "tests"]
+# Tests are checked too: they are the first client of the public API. So are the
+# scripts of the repository, such as the release script
+include = ["src", "tests", "scripts"]
 # Check against the oldest supported version, so newer syntax is rejected
 pythonVersion = "{{ python_min_version }}"
 typeCheckingMode = "standard"

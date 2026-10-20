@@ -18,8 +18,24 @@ jobs:
       id-token: write
 {%- endif %}
 
+  # A forgotten `scripts/release.py prepare` fails the release here, before
+  # anything is published: the changelog must have a section for the tag, and
+  # CITATION.cff its version and date. Pre-releases (a, b, rc) are not checked.
+  changelog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # The script only needs the standard library: the Python of the runner is enough
+      - run: |
+          if [[ "$GITHUB_REF_NAME" =~ (a|b|rc)[0-9]+$ ]]; then exit 0; fi
+          python3 scripts/release.py check "$GITHUB_REF_NAME"
+
   build:
-    needs: ci
+    needs: [ci, changelog]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -80,6 +96,11 @@ jobs:
       contents: write
       id-token: write
     steps:
+      # The notes of the release come from CHANGELOG.md. Checked out first: the
+      # checkout empties the working directory
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: dist
@@ -93,12 +114,18 @@ jobs:
           GH_TOKEN: {% raw %}${{ github.token }}{% endraw %}
           # Passed through the environment, never interpolated in the script
           PROJECT_NAME: {{ q(project_name) }}
+        # The changelog section of the version becomes the notes of the release,
+        # and the description of its Zenodo record. Pre-releases have no section:
+        # their notes are generated from the merged pull requests instead
         run: |
-          flags=()
-          if [[ "$GITHUB_REF_NAME" =~ (a|b|rc)[0-9]+$ ]]; then flags+=(--prerelease); fi
+          if [[ "$GITHUB_REF_NAME" =~ (a|b|rc)[0-9]+$ ]]; then
+            flags=(--prerelease --generate-notes)
+          else
+            python3 scripts/release.py notes "$GITHUB_REF_NAME" > "$RUNNER_TEMP/notes.md"
+            flags=(--notes-file "$RUNNER_TEMP/notes.md")
+          fi
           gh release create "$GITHUB_REF_NAME" dist/* \
             --repo "$GITHUB_REPOSITORY" \
             --title "$PROJECT_NAME ${GITHUB_REF_NAME#v}" \
             --verify-tag \
-            --generate-notes \
             "${flags[@]}"
