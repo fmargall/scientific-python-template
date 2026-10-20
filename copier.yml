@@ -50,6 +50,12 @@ python_max_version:
   type: str
   when: false
   default: "3.{{ ('%Y' | strftime | int) - (2011 if ('%m' | strftime | int) >= 10 else 2012) }}"
+
+use_codecov:
+  type: bool
+  help: Upload the test coverage to Codecov (the Codecov GitHub app must be installed)
+  default: true
+
 repository_url:
   type: str
   help: URL of the repository (e.g. https://github.com/owner/repo)
