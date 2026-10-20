@@ -1,7 +1,70 @@
 # Scientific Python Template
 
 [![Copier][copier-badge]][copier]
+[![Test template][test-badge]][test-workflow]
+[![License: MIT][license-badge]](LICENSE.txt)
 
-<!-- ... Links to all the repo badges ... -->
+A [Copier] template for scientific Python packages: uv, ruff, pyright, pre-commit, a tested
+CI, releases to PyPI with trusted publishing, citation metadata ready for Zenodo, and
+projects kept up to date with `copier update`.
+
+## What you get
+
+- **Packaging**: a `pyproject.toml` built with setuptools and setuptools-scm (the version
+  comes from the git tags), a typed package in `src/`, and the development tools in
+  dependency groups, locked in `uv.lock`.
+- **Quality checks**: ruff (lint and format), pyright, pytest with coverage, and pre-commit
+  hooks for file hygiene, `.editorconfig`, spelling (codespell) and the security of the
+  workflows (zizmor).
+- **Continuous integration**: tests on every supported Python version, following
+  [SPEC 0][spec-0], plus a run with the newest versions of the dependencies, all behind a
+  single `ci-passed` check.
+- **Releases**: a script that turns the `[Unreleased]` changes of the changelog into a
+  release, and a workflow that checks it, then publishes to TestPyPI and PyPI with trusted
+  publishing and creates a GitHub release with signed distributions.
+- **Citation**: a `CITATION.cff` with the authors and their ORCID, read by GitHub and Zenodo.
+- **Community files**: a license (MIT or AGPL-3.0-or-later), a code of conduct, contributing
+  and security guides, light issue forms, a pull request template, and architecture
+  decision records in `docs/adr/`.
+- **Maintenance**: Dependabot for the actions, the dependencies and the hooks, and a script
+  that configures the GitHub repository (merge methods, security features, rulesets):
+  `main` only changes through pull requests whose CI passes.
+
+## Creating a project
+
+You need [uv], git and, to configure the GitHub repository, the [GitHub CLI][gh]. Then:
+
+```bash
+uvx copier copy gh:fmargall/scientific-python-template my-project
+```
+
+Copier asks a few questions (names, description, license, authors...), generates the
+project, then lists the next steps: creating the environment and the lock file, the first
+commit, the GitHub repository and the services outside of it (PyPI, Zenodo, Codecov).
+
+## Updating a project
+
+When the template evolves, apply its changes to a project, from a clean working tree:
+
+```bash
+uvx copier update
+```
+
+Copier merges the changes of the template with those made in the project, and lists what to
+check before committing. `.copier-answers.yml` records the answers and the version of the
+template used: commit it, and never edit it by hand.
+
+## Contributing
+
+Changes to the template are tested on generated projects: see the
+[contributing guide](CONTRIBUTING.md). Everyone taking part in the project is expected to
+follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
 [copier]: https://github.com/copier-org/copier
 [copier-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/copier-org/copier/master/img/badge/badge-black.json
+[gh]: https://cli.github.com/
+[license-badge]: https://img.shields.io/badge/license-MIT-blue
+[spec-0]: https://scientific-python.org/specs/spec-0000/
+[test-badge]: https://github.com/fmargall/scientific-python-template/actions/workflows/test-template.yml/badge.svg
+[test-workflow]: https://github.com/fmargall/scientific-python-template/actions/workflows/test-template.yml
+[uv]: https://docs.astral.sh/uv/

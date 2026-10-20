@@ -1,10 +1,47 @@
 # {{ project_name }}
 
+[![CI][ci-badge]][ci-workflow]
+
+{{ project_description.strip() }}
+
+## Installation
+
+```bash
+pip install {{ distribution_name }}
+```
+
+{{ project_name }} requires Python {{ python_min_version }} or later.
+
+## Usage
+
+```python
+import {{ package_name }}
+
+print({{ package_name }}.__version__)
+```
+
+## Contributing
+
+Bug reports, questions and contributions are welcome: see the
+[contributing guide](CONTRIBUTING.md) to set up a development environment. Everyone taking
+part in the project is expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Citation
+
+If you use {{ project_name }} in your research, please cite it with the metadata of
+[`CITATION.cff`](CITATION.cff), also available through the "Cite this repository" button
+of GitHub.
+
+## License
+
+{{ project_name }} is distributed under the [{{ license }}](LICENSE.txt) license.
+
 ---
 
 <sub>[![Made with Copier][copier-badge]][copier] using the [Scientific Python Template][template].</sub>
 
-<!-- ... Links to all the repo badges ... -->
+[ci-badge]: {{ repository_url }}/actions/workflows/ci.yml/badge.svg
+[ci-workflow]: {{ repository_url }}/actions/workflows/ci.yml
 [copier]: https://github.com/copier-org/copier
 [copier-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/copier-org/copier/master/img/badge/badge-black.json
 [template]: https://github.com/fmargall/scientific-python-template
