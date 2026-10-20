@@ -1,0 +1,31 @@
+# Version updates of the dependencies, opened as pull requests by Dependabot
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+#
+# Only the tooling of this repository is covered: Dependabot does not read the
+# .jinja files of template/, so the versions pinned there (actions, hooks,
+# pyright) are updated by hand, for example from the Dependabot pull requests of
+# a project generated from the template.
+#
+# Dependabot only opens PRs: nothing changes until one is merged.
+# An update goes into the first group it matches, so order matters.
+# Ungrouped updates (majors) get one PR each, so their release notes can be
+# reviewed on their own.
+version: 2
+updates:
+  # Hooks of .pre-commit-config.yaml (rev of each hook repository)
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Wait a week before proposing a new release, so compromised versions get pulled first
+    cooldown:
+      default-days: 7
+    # Follow the gitmoji + Conventional Commits convention: "⬆️ chore: bump ..."
+    commit-message:
+      prefix: "⬆️ chore"
+    groups:
+      # Every hook: minor and patch updates are batched into a single PR
+      hooks:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
