@@ -1,6 +1,47 @@
 _subdirectory: template
 _min_copier_version: "9.0"
 
+# Shown at the end of `copier copy`: the steps the template cannot do itself,
+# because they run commands (which Copier only allows with --trust) or happen
+# outside of this machine (GitHub, PyPI, Codecov)
+_message_after_copy: |
+  {{ project_name }} has been generated. Next steps:
+
+  1. Create the repository on the main branch (the one the CI runs on), the
+      environment and the lock file (uv.lock, required by the CI), install the
+      pre-commit hooks, and commit everything:
+
+        cd {{ _copier_conf.dst_path }}
+        git init -b main
+        uv sync
+        uv run pre-commit install
+        git add --all
+        git commit -m "🎉 chore: generate the project from python-template"
+
+  2. Push to {{ repository_url }}, then in the Settings of the repository:
+      - Security: enable "Private vulnerability reporting" (used by SECURITY.md)
+      - Environments: create the "testpypi" and "pypi" environments
+
+  3. On TestPyPI and PyPI, add a trusted publisher for the release.yml workflow,
+      with the environment of the same name, to publish without any token.
+  {%- if use_codecov %}
+
+  4. Install the Codecov GitHub app for the repository, or the tests job fails.
+  {%- endif %}
+
+# Shown at the end of `copier update`
+_message_after_update: |
+  {{ project_name }} has been updated. Before committing:
+
+  1. Review the changes with `git diff`, and resolve the conflicts, if any
+      (conflict markers in the files, or *.rej files).
+  2. Update the lock file if pyproject.toml changed, then run all the checks:
+
+        uv lock
+        uv sync
+        uv run pre-commit run --all-files
+        uv run pytest
+
 project_name:
   type: str
   help: Project name (shown in the README.md)
