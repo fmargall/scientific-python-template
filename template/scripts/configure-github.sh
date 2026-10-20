@@ -15,20 +15,34 @@ set -euo pipefail
 dry_run=false
 if [[ ${1:-} == --dry-run ]]; then dry_run=true; fi
 cd "$(dirname "$0")/.."
+
+if ! command -v gh > /dev/null; then
+    echo "error: the GitHub CLI (gh) is not installed: see https://cli.github.com/" >&2
+    echo "       (on Windows: winget install --id GitHub.cli, then open a new terminal)" >&2
+    echo "       On Windows, run this script with Git Bash: the bash command of PowerShell" >&2
+    echo "       may be the one of WSL, which does not see the programs installed on Windows" >&2
+    exit 1
+fi
+if ! gh auth status > /dev/null 2>&1; then
+    echo "error: the GitHub CLI is not authenticated: run gh auth login first" >&2
+    exit 1
+fi
 repo=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
 echo "Configuring $repo$($dry_run && echo ' (dry run: nothing is changed)')"
 
-# api METHOD PATH [JSON body on stdin]: call the REST API of the repository
+# api METHOD PATH [JSON body on stdin]: call the REST API of the repository.
+# The endpoints given to gh have no leading slash: Git Bash on Windows rewrites the
+# arguments starting with "/" as file paths ("/repos" -> "C:/Program Files/Git/repos")
 api() {
     local method=$1 path=$2 body=""
     if [[ ! -t 0 ]]; then body=$(cat); fi
     if $dry_run; then
         echo "- would call: $method /repos/$repo$path${body:+ with $(tr -d '\n' <<< "$body" | tr -s ' ')}"
     elif [[ -n $body ]]; then
-        gh api --method "$method" "/repos/$repo$path" --input - <<< "$body" > /dev/null
+        gh api --method "$method" "repos/$repo$path" --input - <<< "$body" > /dev/null
         echo "- done: $method /repos/$repo$path"
     else
-        gh api --method "$method" "/repos/$repo$path" --silent < /dev/null
+        gh api --method "$method" "repos/$repo$path" --silent < /dev/null
         echo "- done: $method /repos/$repo$path"
     fi
 }
@@ -84,7 +98,7 @@ if [[ -f .github/workflows/release.yml ]]; then
         api PUT "/environments/$environment" <<'EOF'
 {"deployment_branch_policy": {"protected_branches": false, "custom_branch_policies": true}}
 EOF
-        existing=$(gh api "/repos/$repo/environments/$environment/deployment-branch-policies" \
+        existing=$(gh api "repos/$repo/environments/$environment/deployment-branch-policies" \
             --jq '.branch_policies[] | select(.name == "v*" and .type == "tag") | .id' 2> /dev/null || true)
         if [[ -n $existing ]]; then
             echo "- the $environment environment already deploys from the v* tags only"
@@ -99,7 +113,7 @@ fi
 echo "Rulesets of .github/rulesets"
 for file in .github/rulesets/*.json; do
     name=$(sed -n 's/^  "name": "\(.*\)",$/\1/p' "$file")
-    id=$(gh api "/repos/$repo/rulesets" --jq ".[] | select(.name == \"$name\") | .id")
+    id=$(gh api "repos/$repo/rulesets" --jq ".[] | select(.name == \"$name\") | .id")
     if [[ -n $id ]]; then
         api PUT "/rulesets/$id" < "$file"
     else
