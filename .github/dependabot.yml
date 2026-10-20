@@ -12,6 +12,25 @@
 # reviewed on their own.
 version: 2
 updates:
+  # GitHub Actions used in .github/workflows (pinned by SHA, version in trailing comment).
+  # A bump here is a reminder to bump the same actions in template/.github/workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Wait a week before proposing a new release, so compromised versions get pulled first
+    cooldown:
+      default-days: 7
+    # Follow the gitmoji + Conventional Commits convention: "⬆️ ci: bump ..."
+    commit-message:
+      prefix: "⬆️ ci"
+    groups:
+      # Every action: minor and patch updates are batched into a single PR
+      actions:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
   # Hooks of .pre-commit-config.yaml (rev of each hook repository)
   - package-ecosystem: "pre-commit"
     directory: "/"

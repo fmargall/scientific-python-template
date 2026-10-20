@@ -30,3 +30,11 @@ repos:
       - id: codespell
         # Verbatim texts
         exclude: ^(LICENSE\.txt|CODE_OF_CONDUCT\.md|licenses/.*|template/CODE_OF_CONDUCT\.md\.jinja)$
+
+  # Audit the workflows of this repository, dependabot.yml and this file for
+  # security issues. The .jinja workflows of template/ are audited in the
+  # generated projects instead, by scripts/test-template.sh
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.31.1
+    hooks:
+      - id: zizmor

@@ -1,0 +1,12 @@
+# Answers of scripts/test-template.sh: AGPL license, with every optional answer
+project_name: Example Project
+repository_url: https://github.com/example/example-project
+homepage_url: https://example.github.io/example-project
+project_description: An example project, generated to test the template.
+keywords: [testing, templates, "quoted: keyword"]
+license: AGPL-3.0-or-later
+author_given_names: Jane
+author_family_names: Doe
+author_email: jane.doe@example.org
+author_orcid: https://orcid.org/0000-0002-1825-0097
+use_codecov: true

@@ -60,29 +60,24 @@ the generated projects carry their own checks, see below.
 
 ## Testing a Change
 
-A change is tested on generated projects. Generate one from the working tree (Copier
-includes the uncommitted changes, with a `DirtyLocalWarning`), outside of this repository:
+A change is tested on generated projects. `scripts/test-template.sh` generates one from
+the working tree (uncommitted changes included) with the answers of a file of
+`tests/answers/`, in a temporary folder, then runs all its checks: the pre-commit hooks,
+which must neither fail nor modify a file, the tests, the build, the validation of the
+metadata and workflows, and the preparation of a first release.
 
 ```bash
-uvx copier copy . ../demo
+bash scripts/test-template.sh agpl  # AGPL, with every optional answer
+bash scripts/test-template.sh mit   # MIT, without them, and with values to escape
 ```
 
-Then, in the generated project, run all its checks as a contributor of this project would:
+The CI runs both, together with the hooks of this repository and
+`scripts/check_community_files.py`, which checks that `CODE_OF_CONDUCT.md` and
+`SECURITY.md` are still the rendering of their versions in `template/`.
 
-```bash
-cd ../demo
-git init
-git add -A
-uv sync
-uv run pre-commit run --all-files
-uv run pytest --cov
-uv build
-```
-
-The generated project must pass all its hooks on their first run, without any file being
-modified by them. Test each value of the questions that the change depends on: at least
-one project per license (`MIT` and `AGPL-3.0-or-later`), and both with and without the
-optional answers (author email, ORCID, homepage, keywords).
+When a change depends on an answer that no file of `tests/answers/` covers, add one.
+On Windows, if a tool fails to install with the newest Python, run the script with
+`UV_PYTHON=3.13`, for example.
 
 ## Submitting Changes
 

@@ -1,0 +1,12 @@
+# Answers of scripts/test-template.sh: MIT license, without the optional answers,
+# and with values that need quoting or escaping in the generated files
+project_name: 'My-Tool "Quoted": Test'
+package_name: my_tool
+repository_url: https://github.com/example/my-tool
+project_description: 'A "tiny" tool: with quotes and a colon.'
+python_min_version: "3.11"
+license: MIT
+author_given_names: Jean-Luc
+author_family_names: O'Neil
+conduct_email: conduct@example.org
+use_codecov: false

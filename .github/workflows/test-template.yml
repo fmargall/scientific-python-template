@@ -1,0 +1,69 @@
+name: Test template
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Run by hand from the Actions tab, for example after a release of a tool used
+  # by the generated projects, without pushing anything
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Hooks of this repository: hygiene, .editorconfig, spelling, workflows
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - run: uvx pre-commit run --all-files --show-diff-on-failure
+
+  # CODE_OF_CONDUCT.md and SECURITY.md must stay the rendering of template/
+  community-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - run: uv run --no-project --with jinja2 python scripts/check_community_files.py
+
+  # Generate a project for each set of answers of tests/answers/, and run all its
+  # checks: hooks, tests, build, metadata, workflows and a first release
+  generated-project:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        case: [agpl, mit]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - env:
+          CASE: ${{ matrix.case }}
+        run: bash scripts/test-template.sh "$CASE" "$RUNNER_TEMP/project"
+
+  # Single required status check for the main branch ruleset: it passes only
+  # if every job below succeeded, so the matrix can change without updating
+  # the ruleset. Any new job must be added to `needs`, or its failure will not
+  # block merging.
+  ci-passed:
+    # A job whose dependency failed is skipped, and a skipped required check
+    # counts as passing: always() makes it run and report the real outcome
+    if: always()
+    needs: [lint, community-files, generated-project]
+    runs-on: ubuntu-latest
+    steps:
+      # A cancelled job proved nothing, so it fails the check too
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
