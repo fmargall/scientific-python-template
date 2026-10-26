@@ -10,12 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.1] - 2026-10-21
+## [0.1.1] - 2026-10-26
 
 ### Changed
 
 - The footer of the README states that the project was made with Copier, with the
   badge inline and centered.
+- Pull requests are merged with "Squash and merge" only, in the main ruleset and in
+  `scripts/configure-github.sh`: GitHub signs the squash commit, so every commit of
+  `main` stays verified, whereas "Rebase and merge" rewrites the commits unsigned.
+  Run `scripts/configure-github.sh` again after `copier update` to apply it.
 
 ## [0.1.0] - 2026-10-20
 
