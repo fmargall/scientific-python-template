@@ -3,7 +3,7 @@
 # .github/rulesets/ do not cover, then create or update those rulesets.
 #
 # Every change of main goes through a pull request, whose CI must pass, and is
-# merged with "Squash and merge" or "Rebase and merge"; version tags can never be
+# merged with "Squash and merge"; version tags can never be
 # moved nor deleted. The script can be run again at any time: it sets the same
 # values, and updates the rulesets that already exist instead of duplicating them.
 #
@@ -48,8 +48,10 @@ api() {
 }
 
 echo "Features, merge buttons and secret scanning"
-# Only squash and rebase merges, as in the main ruleset. The title of the pull
-# request becomes the commit message of a squash, as pull_request_template.md says
+# Only squash merges, as in the main ruleset: GitHub signs the squash commit, so
+# every commit of main is verified. "Rebase and merge" rewrites the commits
+# without signing them. The title of the pull request becomes the commit message
+# of the squash, as pull_request_template.md says
 api PATCH "" <<'EOF'
 {
     "has_issues": true,
@@ -58,7 +60,7 @@ api PATCH "" <<'EOF'
     "has_discussions": false,
     "allow_merge_commit": false,
     "allow_squash_merge": true,
-    "allow_rebase_merge": true,
+    "allow_rebase_merge": false,
     "squash_merge_commit_title": "PR_TITLE",
     "squash_merge_commit_message": "PR_BODY",
     "delete_branch_on_merge": true,
