@@ -2,10 +2,12 @@
     py render_header.py "Scientific Python Template" "Copier template for scientific Python packages" --out .github/assets
     If you like it, please consider starring the repository! -->
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/header_dark.svg">
-  <img alt="Scientific Python Template" src=".github/assets/header_light.svg" width="100%">
-</picture>
+<p>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/header_dark.svg">
+    <img alt="Scientific Python Template" src=".github/assets/header_light.svg" width="100%">
+  </picture>
+</p>
 
 [![Copier][copier-badge]][copier]
 [![Test template][test-badge]][test-workflow]
