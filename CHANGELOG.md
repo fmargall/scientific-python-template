@@ -10,6 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-27
+
+### Security
+
+- `pypa/gh-action-pypi-publish` is updated to 1.14.3, which fixes
+  [GHSA-5xjx-3w67-w9x9](https://github.com/pypa/gh-action-pypi-publish/security/advisories/GHSA-5xjx-3w67-w9x9).
+
+### Fixed
+
+- The lint job of the CI runs pre-commit with `uvx` instead of `pre-commit/action`,
+  which calls `actions/cache` by tag: once `scripts/configure-github.sh` requires
+  actions pinned to a full commit SHA, GitHub refused to run the job.
+
 ## [0.1.1] - 2026-10-26
 
 ### Changed
@@ -46,6 +59,7 @@ Initial release.
   `scripts/configure-github.sh` to configure the GitHub repository.
 - `.copier-answers.yml`, so that projects can be updated with `copier update`.
 
-[unreleased]: https://github.com/fmargall/scientific-python-template/compare/v0.1.1...HEAD
+[unreleased]: https://github.com/fmargall/scientific-python-template/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/fmargall/scientific-python-template/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/fmargall/scientific-python-template/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/fmargall/scientific-python-template/releases/tag/v0.1.0
