@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The lint job of the CI runs pre-commit with `uvx` instead of `pre-commit/action`,
+  which calls `actions/cache` by tag: once `scripts/configure-github.sh` requires
+  actions pinned to a full commit SHA, GitHub refused to run the job.
+
 ## [0.1.1] - 2026-10-26
 
 ### Changed
