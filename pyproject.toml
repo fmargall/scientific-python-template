@@ -1,0 +1,20 @@
+# Tooling of this repository only: the projects generated from the template get
+# their own pyproject.toml, from template/pyproject.toml.jinja. This file is not
+# a package, it only declares the environment of the tools, locked in uv.lock
+# so that every contributor and the CI use the same versions.
+[project]
+name = "scientific-python-template"
+version = "0"
+requires-python = ">=3.13"
+
+[tool.uv]
+# Nothing to build nor install: uv only manages the environment
+package = false
+
+# Installed with `uv sync --group docs`
+[dependency-groups]
+docs = [
+    "sphinx",
+    "myst-parser",
+    "pydata-sphinx-theme",
+]

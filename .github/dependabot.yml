@@ -31,6 +31,24 @@ updates:
         patterns: ["*"]
         update-types: ["minor", "patch"]
 
+  # Python tooling of pyproject.toml (the docs group), and their locked versions in uv.lock
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Wait a week before proposing a new release, so compromised versions get pulled first
+    cooldown:
+      default-days: 7
+    # Follow the gitmoji + Conventional Commits convention: "⬆️ build: bump ..."
+    commit-message:
+      prefix: "⬆️ build"
+    groups:
+      # Every dependency: minor and patch updates are batched into a single PR
+      python:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
   # Hooks of .pre-commit-config.yaml (rev of each hook repository)
   - package-ecosystem: "pre-commit"
     directory: "/"
