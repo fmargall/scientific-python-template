@@ -3,10 +3,15 @@
 #
 # Built with: uv run sphinx-build -W --keep-going -b html docs docs/_build/html
 
+import os
+
 project = "Scientific Python Template"
 author = "François Margall"
 copyright = "2026, François Margall"
 language = "en"
+# Version of the documentation, selected in the version switcher: "X.Y.Z" when
+# docs.yml builds the tag vX.Y.Z, "dev" otherwise (main, pull requests, local builds)
+version = release = os.environ.get("DOCS_VERSION", "dev")
 
 extensions = [
     # Markdown pages, with the Sphinx directives and roles in MyST syntax
@@ -45,4 +50,16 @@ html_theme_options = {
             "icon": "fa-brands fa-github",
         },
     ],
+    # The version switcher, before the default items of the navbar
+    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
+    "switcher": {
+        # Written by scripts/update_docs_site.py at the root of the site
+        "json_url": "https://fmargall.github.io/scientific-python-template/versions.json",
+        "version_match": version,
+    },
+    # Do not download versions.json at build time: the build must not depend on
+    # the network, nor on the site being already published
+    "check_switcher": False,
+    # A banner on every version but stable, with a link to it
+    "show_version_warning_banner": True,
 }

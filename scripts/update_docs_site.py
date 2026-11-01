@@ -1,0 +1,83 @@
+"""Update the index of the documentation site stored on the gh-pages branch.
+
+The site holds one folder per published version: dev/ for main, X.Y.Z/ for the
+tag vX.Y.Z. Once docs.yml has put a new folder in place, this script copies the
+newest final release (not a, b nor rc) to stable/, the address to share, which
+always shows the current release. It then writes versions.json, read by the
+version switcher of the theme, and index.html, which sends the root of the site
+to stable/, or to dev/ as long as there is no release.
+
+It only needs the standard library: docs.yml runs it with the Python of the
+runner, in the job that can push to the repository.
+
+Usage: python3 scripts/update_docs_site.py <site folder> <base URL of the site>
+"""
+
+import json
+import re
+import shutil
+import sys
+from pathlib import Path
+
+# A, b and rc pre-releases sort before the final release of the same version
+VERSION = re.compile(r"(\d+)\.(\d+)\.(\d+)(?:(a|b|rc)(\d+))?")
+PRE_RELEASES = {"a": 0, "b": 1, "rc": 2, None: 3}
+
+
+def sort_key(version: str) -> tuple[int, ...]:
+    """Order the versions as released: 1.0.0a1 < 1.0.0rc1 < 1.0.0 < 1.0.1."""
+    match = VERSION.fullmatch(version)
+    if match is None:
+        raise ValueError(f"not a version: {version}")
+    major, minor, patch, pre, number = match.groups()
+    return (int(major), int(minor), int(patch), PRE_RELEASES[pre], int(number or 0))
+
+
+def main() -> int:
+    """Rebuild stable/, versions.json and index.html from the version folders."""
+    site, base_url = Path(sys.argv[1]), sys.argv[2].rstrip("/")
+    versions = sorted(
+        (path.name for path in site.iterdir() if path.is_dir() and VERSION.fullmatch(path.name)),
+        key=sort_key,
+        reverse=True,
+    )
+    releases = [version for version in versions if sort_key(version)[3] == PRE_RELEASES[None]]
+    stable = releases[0] if releases else None
+
+    # A copy, not a redirection: the links to a page of stable/ keep working
+    # when the next release replaces it
+    shutil.rmtree(site / "stable", ignore_errors=True)
+    if stable is not None:
+        shutil.copytree(site / stable, site / "stable")
+
+    # https://pydata-sphinx-theme.readthedocs.io/en/stable/user_guide/version-dropdown.html
+    entries = []
+    if (site / "dev").is_dir():
+        entries.append({"name": "dev", "version": "dev", "url": f"{base_url}/dev/"})
+    for version in versions:
+        if version == stable:
+            # Built with version_match = X.Y.Z, so its pages select this entry
+            entries.append(
+                {
+                    "name": f"{version} (stable)",
+                    "version": version,
+                    "url": f"{base_url}/stable/",
+                    "preferred": True,
+                }
+            )
+        else:
+            entries.append({"name": version, "version": version, "url": f"{base_url}/{version}/"})
+    (site / "versions.json").write_text(json.dumps(entries, indent=2) + "\n", encoding="utf-8")
+
+    home = "stable/" if stable is not None else "dev/"
+    (site / "index.html").write_text(
+        f'<meta http-equiv="refresh" content="0; url={home}">\n', encoding="utf-8"
+    )
+
+    print(f"Versions: {', '.join(versions) or 'none'}; stable: {stable or 'none'}")
+    print(f"The root of the site sends to {home}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
