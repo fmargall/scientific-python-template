@@ -112,6 +112,22 @@ EOF
     done
 fi
 
+if [[ -f .github/workflows/docs.yml ]]; then
+    echo "GitHub Pages of docs.yml"
+    # docs.yml deploys with actions/deploy-pages: the source of the site is "GitHub
+    # Actions". The source "Deploy from a branch" would run a workflow of GitHub
+    # whose actions are not pinned by SHA, which the setting above rejects
+    if gh api "repos/$repo/pages" --silent 2> /dev/null; then
+        api PUT /pages <<'EOF'
+{"build_type": "workflow"}
+EOF
+    else
+        api POST /pages <<'EOF'
+{"build_type": "workflow"}
+EOF
+    fi
+fi
+
 echo "Rulesets of .github/rulesets"
 for file in .github/rulesets/*.json; do
     name=$(sed -n 's/^  "name": "\(.*\)",$/\1/p' "$file")
