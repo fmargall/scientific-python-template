@@ -3,5 +3,11 @@
     "name": "dev",
     "version": "dev",
     "url": "https://fmargall.github.io/scientific-python-template/dev/"
+  },
+  {
+    "name": "0.2.0 (stable)",
+    "version": "0.2.0",
+    "url": "https://fmargall.github.io/scientific-python-template/stable/",
+    "preferred": true
   }
 ]
