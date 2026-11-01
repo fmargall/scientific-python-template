@@ -3,3 +3,13 @@
 {%- macro q(value) -%}
 "{{ value | replace('\\', '\\\\') | replace('"', '\\"') }}"
 {%- endmacro -%}
+
+{#- Quote a value as a Python string, as ruff format would: in double quotes,  -#}
+{#- unless it contains more double quotes than single ones.                    -#}
+{%- macro py(value) -%}
+{%- if value.count('"') > value.count("'") -%}
+'{{ value | replace('\\', '\\\\') | replace("'", "\\'") }}'
+{%- else -%}
+{{ q(value) }}
+{%- endif -%}
+{%- endmacro -%}

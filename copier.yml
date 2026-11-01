@@ -1,6 +1,10 @@
 _subdirectory: template
 _min_copier_version: "9.0"
 
+# Written once, then owned by the project: `copier update` never changes them
+_skip_if_exists:
+  - docs/index.md
+
 # Shown at the end of `copier copy`: the steps the template cannot do itself,
 # because they run commands (which Copier only allows with --trust) or happen
 # outside of this machine (GitHub, PyPI, Zenodo, Codecov)
@@ -21,13 +25,17 @@ _message_after_copy: |
   2. Create the empty repository {{ repository_url }} on GitHub, push to it,
       then configure it with the GitHub CLI (gh). The script sets the merge
       buttons, the security features, the Actions permissions, the testpypi and
-      pypi environments, and the rulesets of .github/rulesets: from then on,
-      main only changes through pull requests whose CI passes.
+      pypi environments, GitHub Pages for the documentation, and the rulesets
+      of .github/rulesets: from then on, main only changes through pull
+      requests whose CI passes.
 
         git remote add origin {{ repository_url }}.git
         git push -u origin main
         bash scripts/configure-github.sh --dry-run  # review the changes first
         bash scripts/configure-github.sh
+
+      The Docs workflow of this first push fails, GitHub Pages being disabled
+      until the script runs: run it again from the Actions tab of the repository.
 
   3. On TestPyPI and PyPI, add a trusted publisher for the release.yml workflow,
       with the environment of the same name, to publish without any token.

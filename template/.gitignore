@@ -71,6 +71,8 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+# Pages of the API reference, written by autosummary at each build
+docs/generated/
 
 # PyBuilder
 .pybuilder/

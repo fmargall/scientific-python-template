@@ -65,6 +65,23 @@ jobs:
       - run: uv build
       - run: uvx twine check --strict dist/*
 
+  # The documentation must build without any warning: a broken reference, a page
+  # missing from the table of contents or a malformed docstring fails the CI.
+  # docs.yml publishes it once merged.
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # autodoc imports the package, installed with its version from the tags
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          python-version: "{{ python_min_version }}"
+      - run: uv sync --locked --no-default-groups --group docs
+      - run: uv run --no-sync sphinx-build -W --keep-going -b html docs docs/_build/html
+
   tests:
     runs-on: ubuntu-latest
 {%- if use_codecov %}
@@ -121,7 +138,7 @@ jobs:
     # A job whose dependency failed is skipped, and a skipped required check
     # counts as passing: always() makes it run and report the real outcome
     if: always()
-    needs: [lint, typecheck, build, tests]
+    needs: [lint, typecheck, build, docs, tests]
     runs-on: ubuntu-latest
     steps:
       # A cancelled job proved nothing, so it fails the check too

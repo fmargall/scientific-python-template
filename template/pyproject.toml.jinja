@@ -51,6 +51,8 @@ Changelog = {{ q(repository_url ~ "/blob/main/CHANGELOG.md") }}
 # and are installed with `uv sync` (or `pip install -e . --group dev`, pip >= 25.1)
 [dependency-groups]
 test = ["pytest", "pytest-cov"]
+# Installed with `uv sync --group docs`, to build the documentation of docs/
+docs = ["sphinx", "myst-parser", "pydata-sphinx-theme", "numpydoc"]
 # pyright is pinned: each release can add new errors, upgrades must be deliberate.
 # The "nodejs" extra ships Node.js as a wheel instead of downloading it at first run.
 dev = [
