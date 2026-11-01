@@ -1,0 +1,142 @@
+{#- GitHub Actions expressions ${{ }} clash with Jinja: they are wrapped in raw blocks -#}
+{% raw -%}
+name: Docs
+
+# Publish the documentation on GitHub Pages: main under /dev/, each tag vX.Y.Z under
+# /X.Y.Z/, and the newest release under /stable/ too. The pull requests only
+# build it, in the docs job of ci.yml
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  # Run by hand from the Actions tab, for example to publish again after a failure
+  workflow_dispatch:
+
+permissions: {}
+
+# Deployments are queued, never cancelled: each one builds on the gh-pages branch
+# left by the previous one
+concurrency:
+  group: docs
+  cancel-in-progress: false
+
+jobs:
+  # Runs the third-party code (Sphinx, its extensions, their dependencies) with a
+  # read-only token
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      # The folder of the site, and the version selected in the version switcher
+      - id: version
+        run: |
+          if [[ $GITHUB_REF_TYPE != tag ]]; then
+              version=dev
+          elif [[ $GITHUB_REF_NAME =~ ^v([0-9]+\.[0-9]+\.[0-9]+((a|b|rc)[0-9]+)?)$ ]]; then
+              version=${BASH_REMATCH[1]}
+          else
+              echo "error: $GITHUB_REF_NAME is not a version tag (vX.Y.Z, or vX.Y.Z with a, b or rc)" >&2
+              exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # autodoc imports the package, installed with its version from the tags
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          # Same version as the docs job of ci.yml
+          python-version: "{% endraw %}{{ python_min_version }}{% raw %}"
+      - run: uv sync --locked --no-default-groups --group docs
+      - run: uv run --no-sync sphinx-build -W --keep-going -b html docs docs/_build/html
+        env:
+          DOCS_VERSION: ${{ steps.version.outputs.version }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: html
+          path: docs/_build/html
+          if-no-files-found: error
+
+  # The gh-pages branch stores every published version of the documentation, one
+  # folder each. Only this job can write to the repository, and it runs no
+  # third-party code: GitHub's own actions, pinned, then git and a script of this
+  # repository that only needs the standard library
+  store:
+    needs: build
+    # A run started by hand on another branch must not replace the docs of main
+    if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.push.outputs.sha }}
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+    steps:
+      # The credentials are kept on purpose: the last step pushes with them, and
+      # nothing in this job uploads the checkout
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 # zizmor: ignore[artipacked]
+        with:
+          persist-credentials: true
+      # The script is kept aside: switching to gh-pages removes the files of the
+      # checkout. The first deployment creates the branch, without any history
+      - run: |
+          cp scripts/update_docs_site.py "$RUNNER_TEMP/"
+          if git fetch --depth 1 origin gh-pages:gh-pages; then
+              git switch gh-pages
+          else
+              git switch --orphan gh-pages
+          fi
+          rm -rf "$VERSION"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: html
+          path: ${{ needs.build.outputs.version }}
+      # stable/, versions.json and index.html
+      - run: python3 "$RUNNER_TEMP/update_docs_site.py" . "https://$GITHUB_REPOSITORY_OWNER.github.io/${GITHUB_REPOSITORY#*/}"
+      - id: push
+        run: |
+          git add --all
+          if git diff --cached --quiet; then
+              echo "The documentation did not change"
+          else
+              git -c user.name="github-actions[bot]" \
+                  -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                  commit --quiet -m "Publish the documentation of $GITHUB_REF_NAME ($GITHUB_SHA)"
+              git push origin gh-pages
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  # Serves the gh-pages branch, as stored above, on GitHub Pages. The Pages source
+  # is "GitHub Actions", set by scripts/configure-github.sh: the classic "Deploy
+  # from a branch" runs a workflow of GitHub whose actions are not pinned by SHA,
+  # which the repository rejects
+  publish:
+    needs: store
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # deploy-pages authenticates with a short-lived OIDC token
+      pages: write
+      id-token: write
+    # Its deployment branch policy, set by scripts/configure-github.sh, allows main
+    # and the v* tags
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.store.outputs.sha }}
+          persist-credentials: false
+      # Hidden files, .git included, are left out of the site
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+{%- endraw %}

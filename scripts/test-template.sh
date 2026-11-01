@@ -36,6 +36,63 @@ step "Build and check the distributions"
 uv build
 uvx twine check --strict dist/*
 
+step "Build the documentation, with a module, a class and a function in the API reference"
+package=$(sed -n "s/^package_name: //p" .copier-answers.yml)
+cat > "src/$package/sample.py" <<'EOF'
+"""A module added by scripts/test-template.sh, to document a submodule."""
+
+
+class Counter:
+    """Count events.
+
+    Parameters
+    ----------
+    start : int, optional
+        First value of the counter.
+    """
+
+    def __init__(self, start: int = 0) -> None:
+        self.value = start
+
+    def increment(self, step: int = 1) -> int:
+        """Add a step to the counter.
+
+        Parameters
+        ----------
+        step : int, default 1
+            Value added to the counter.
+
+        Returns
+        -------
+        int
+            The new value of the counter.
+        """
+        self.value += step
+        return self.value
+
+
+def double(value: float) -> float:
+    """Double a value.
+
+    Parameters
+    ----------
+    value : float
+        Value to double.
+
+    Returns
+    -------
+    float
+        Twice the value.
+    """
+    return 2 * value
+EOF
+uv sync --group docs
+uv run --no-sync sphinx-build -W --keep-going -b html docs docs/_build/html
+for page in index api "generated/$package.sample" "generated/$package.sample.Counter"; do
+    test -f "docs/_build/html/$page.html" || { echo "error: docs/_build/html/$page.html is missing" >&2; exit 1; }
+done
+rm "src/$package/sample.py"
+
 step "Validate the metadata and configuration files"
 uvx validate-pyproject pyproject.toml
 uvx cffconvert --validate

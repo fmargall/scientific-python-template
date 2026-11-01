@@ -1,9 +1,10 @@
 """Check that the files shared with the template have not drifted from it.
 
-Some files of this repository come from template/: CODE_OF_CONDUCT.md and
-SECURITY.md are the rendering of their .jinja versions with the answers of this
-repository, and the GitHub configuration (rulesets, configure-github.sh) is an
-exact copy. This script renders and compares them again, and fails if any differs.
+Some files of this repository come from template/: CODE_OF_CONDUCT.md,
+SECURITY.md and scripts/update_docs_site.py are the rendering of their .jinja
+versions with the answers of this repository, and the GitHub configuration
+(rulesets, configure-github.sh) is an exact copy. This script renders and
+compares them again, and fails if any differs.
 
 Usage: uv run --no-project --with jinja2 python scripts/check_community_files.py
 """
@@ -21,9 +22,10 @@ ANSWERS = {
     "repository_url": "https://github.com/fmargall/scientific-python-template",
     "author_email": "fr.margall@proton.me",
     "conduct_email": "fr.margall@proton.me",
+    "license": "MIT",
 }
 # Rendered from template/<name>.jinja
-RENDERED = ["CODE_OF_CONDUCT.md", "SECURITY.md"]
+RENDERED = ["CODE_OF_CONDUCT.md", "SECURITY.md", "scripts/update_docs_site.py"]
 # Copied verbatim from template/<name>
 COPIED = [
     ".github/rulesets/main.json",

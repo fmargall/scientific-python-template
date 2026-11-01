@@ -31,6 +31,9 @@ projects kept up to date with `copier update`.
 - **Releases**: a script that turns the `[Unreleased]` changes of the changelog into a
   release, and a workflow that checks it, then publishes to TestPyPI and PyPI with trusted
   publishing and creates a GitHub release with signed distributions.
+- **Documentation**: Sphinx with Markdown pages (MyST) and the PyData theme, an API
+  reference generated from the NumPy-style docstrings, built in the CI and published on
+  GitHub Pages, with one version per release and a version switcher.
 - **Citation**: a `CITATION.cff` with the authors and their ORCID, read by GitHub and Zenodo.
 - **Community files**: a license (MIT or AGPL-3.0-or-later), a code of conduct, contributing
   and security guides, light issue forms, a pull request template, and architecture

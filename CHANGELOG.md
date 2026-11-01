@@ -10,6 +10,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A documentation in `docs/`, built with Sphinx: pages in Markdown (MyST), the PyData
+  theme, an API reference generated from the NumPy-style docstrings, and the
+  architecture decision records. The `docs` job of the CI builds it with every warning
+  as an error, and the new `docs.yml` workflow publishes it on GitHub Pages: `main`
+  under `dev/`, each release under its version and `stable/`, with a version switcher.
+  `docs/index.md` belongs to the project: `copier update` never changes it.
+- `scripts/configure-github.sh` enables GitHub Pages, deployed by GitHub Actions, and
+  lets `main` and the version tags deploy to the `github-pages` environment. Run it
+  again after `copier update`, then run the Docs workflow again from the Actions tab.
+- A `docs` dependency group, installed with `uv sync --group docs`: run `uv lock` after
+  `copier update`.
+- A documentation badge and link in the README, and a section on writing the
+  documentation in `CONTRIBUTING.md`.
+
 ## [0.1.2] - 2026-10-27
 
 ### Security

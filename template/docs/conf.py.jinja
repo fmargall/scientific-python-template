@@ -1,0 +1,131 @@
+{%- from "macros/quote.jinja" import py -%}
+{#- The GitHub Pages site of the repository: https://owner.github.io/repo/ -#}
+{%- set pages_url = "https://" ~ repository_url.split("/")[-2] | lower ~ ".github.io/"
+    ~ repository_url.split("/")[-1] ~ "/" -%}
+{% if license == 'AGPL-3.0-or-later' -%}
+# SPDX-License-Identifier: {{ license }}
+# Copyright (C) {{ copyright_year }} {{ copyright_holder }}
+
+{% endif -%}
+"""Configuration of the Sphinx documentation.
+
+https://www.sphinx-doc.org/en/master/usage/configuration.html
+
+Built with: uv run sphinx-build -W --keep-going -b html docs docs/_build/html
+"""
+
+import os
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from docutils import nodes
+    from sphinx.application import Sphinx
+
+project = {{ py(project_name.strip()) }}
+author = {{ py(author_given_names ~ " " ~ author_family_names) }}
+copyright = {{ py(copyright_year ~ ", " ~ copyright_holder) }}
+language = "en"
+# Version of the documentation, selected in the version switcher: "X.Y.Z" when
+# docs.yml builds the tag vX.Y.Z, "dev" otherwise (main, pull requests, local builds)
+version = release = os.environ.get("DOCS_VERSION", "dev")
+
+extensions = [
+    # Markdown pages, with the Sphinx directives and roles in MyST syntax
+    "myst_parser",
+    # The API reference, generated from the docstrings of the package
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    # Docstrings in the NumPy style, the convention checked by ruff
+    "numpydoc",
+    # Links to the documentation of other projects, such as the types of Python
+    "sphinx.ext.intersphinx",
+    # A link from each documented object to its highlighted source code
+    "sphinx.ext.viewcode",
+]
+
+# The build output must never be read back as sources
+exclude_patterns = ["_build"]
+
+# Every reference that does not resolve is a warning, so a failure with -W:
+# no broken link reaches the published documentation
+nitpicky = True
+
+# -- MyST ---------------------------------------------------------------------
+
+myst_enable_extensions = [
+    # Directives written as :::{note} ... ::: are still readable on GitHub,
+    # where ```{note} blocks show up as code
+    "colon_fence",
+]
+# Anchors for the headings up to level 3, so that [text](page.md#a-heading)
+# links work as they do on GitHub
+myst_heading_anchors = 3
+
+# -- API reference ------------------------------------------------------------
+
+# Write a page for each module, class and function listed in api.md, with the
+# templates of _templates/autosummary/
+autosummary_generate = True
+templates_path = ["_templates"]
+# The members of a class are listed by the autosummary template, not by numpydoc
+numpydoc_show_class_members = False
+# Turn the types of the "Parameters" and "Returns" sections into links
+numpydoc_xref_param_type = True
+# Words of these sections that are not types
+numpydoc_xref_ignore = {"optional", "default", "of", "or"}
+
+# Add a project here for each dependency whose types appear in the docstrings,
+# e.g. "numpy": ("https://numpy.org/doc/stable/", None)
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+}
+
+# -- HTML output --------------------------------------------------------------
+
+html_theme = "pydata_sphinx_theme"
+html_title = project
+html_theme_options = {
+    # Icons at the top right
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": {{ py(repository_url) }},
+            "icon": "fa-brands fa-github",
+        },
+        {
+            "name": "PyPI",
+            "url": {{ py("https://pypi.org/project/" ~ distribution_name ~ "/") }},
+            "icon": "fa-brands fa-python",
+        },
+    ],
+    # The version switcher, before the default items of the navbar
+    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
+    "switcher": {
+        # Written by scripts/update_docs_site.py at the root of the GitHub Pages site
+        "json_url": {{ py(pages_url ~ "versions.json") }},
+        "version_match": version,
+    },
+    # Do not download versions.json at build time: the build must not depend on
+    # the network, nor on the site being already published
+    "check_switcher": False,
+    # A banner on every version but stable, with a link to it
+    "show_version_warning_banner": True,
+}
+
+
+def mark_adrs_as_orphans(app: "Sphinx", doctree: "nodes.document") -> None:
+    """Keep the decision records out of the navigation, without a warning.
+
+    The ADRs and their template are reached from the table of adr/README.md, kept
+    readable on GitHub: it has no toctree directive. Without one, Sphinx warns about
+    each of them, unless they are orphans, as with ``orphan: true`` in their front
+    matter, which every new ADR would then have to repeat.
+    """
+    docname = app.env.docname
+    if docname.startswith("adr/") and docname != "adr/README":
+        app.env.metadata[docname]["orphan"] = True
+
+
+def setup(app: "Sphinx") -> None:
+    """Register the event handlers of this configuration."""
+    app.connect("doctree-read", mark_adrs_as_orphans)
