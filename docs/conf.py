@@ -36,5 +36,13 @@ myst_heading_anchors = 3
 html_theme = "pydata_sphinx_theme"
 html_title = project
 html_theme_options = {
-    "github_url": "https://github.com/fmargall/scientific-python-template",
+    # Icons at the top right. The template is only used from GitHub: it is not
+    # published on PyPI nor conda-forge, so it has no link to them
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/fmargall/scientific-python-template",
+            "icon": "fa-brands fa-github",
+        },
+    ],
 }
