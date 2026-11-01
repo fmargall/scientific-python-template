@@ -6,4 +6,6 @@ ends.
 
 ```{toctree}
 :maxdepth: 1
+
+first-project
 ```
