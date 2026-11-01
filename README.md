@@ -72,6 +72,12 @@ Changes to the template are tested on generated projects: see the
 [contributing guide](CONTRIBUTING.md). Everyone taking part in the project is expected to
 follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
+## License
+
+The template is licensed under the [MIT License](LICENSE.txt). The files generated from
+the template belong to your project: you may use them under the license of your choice,
+without attribution.
+
 [copier]: https://github.com/copier-org/copier
 [copier-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/copier-org/copier/master/img/badge/badge-black.json
 [gh]: https://cli.github.com/

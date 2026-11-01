@@ -15,4 +15,5 @@ tutorials/index
 how-to/index
 reference/index
 explanation/index
+license
 ```
