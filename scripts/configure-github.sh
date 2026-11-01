@@ -126,6 +126,23 @@ EOF
 {"build_type": "workflow"}
 EOF
     fi
+    # The github-pages environment that docs.yml deploys to: only main and the
+    # version tags can deploy to it
+    api PUT /environments/github-pages <<'EOF'
+{"deployment_branch_policy": {"protected_branches": false, "custom_branch_policies": true}}
+EOF
+    for policy in main:branch v*:tag; do
+        name=${policy%:*} type=${policy#*:}
+        existing=$(gh api "repos/$repo/environments/github-pages/deployment-branch-policies" \
+            --jq ".branch_policies[] | select(.name == \"$name\" and .type == \"$type\") | .id" 2> /dev/null || true)
+        if [[ -n $existing ]]; then
+            echo "- the github-pages environment already deploys from $name ($type)"
+        else
+            api POST /environments/github-pages/deployment-branch-policies <<EOF
+{"name": "$name", "type": "$type"}
+EOF
+        fi
+    done
 fi
 
 echo "Rulesets of .github/rulesets"
